@@ -27,6 +27,8 @@ object XmlEncoder {
 
   implicit val bigDecimalEncoder = instance[BigDecimal](s => Attribute(s.toString))
 
+  implicit val intEncoder = instance[Int](s => Attribute(s.toString))
+
   implicit val booleanEncoder = instance[Boolean](b => if(b) Attribute("Y") else Attribute("N"))
 
   implicit def productEncoder[A, H <: HList](implicit
