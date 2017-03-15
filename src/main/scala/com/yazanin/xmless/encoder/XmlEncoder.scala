@@ -3,15 +3,8 @@ package com.yazanin.xmless.encoder
 import com.yazanin.xmless.model.{Attribute, Elems, XmlValue}
 import shapeless.{HList, LabelledGeneric, Lazy}
 
-trait XmlEncoder[T] { self =>
+trait XmlEncoder[T] {
   def encode(value: T): XmlValue
-  def contramap[A](f:A => T):XmlEncoder[A] = new XmlEncoder[A] {
-    override def encode(value: A): XmlValue = {
-      val t = f(value)
-      self.encode(t)
-    }
-
-  }
 }
 
 object XmlEncoder {
@@ -40,7 +33,7 @@ object XmlEncoder {
   implicit def seqEncoder[A](implicit productEncoder: XmlEncoder[A]): XmlEncoder[Seq[A]] = instance[Seq[A]] {
     seq: Seq[A] => seq.foldLeft(Elems(Nil): XmlValue)((acc: XmlValue, actual: A) =>
       acc match {
-        case a: Elems => a.copy(elems = Seq(productEncoder.encode(actual)) ++ a.elems)
+        case els: Elems => els.copy(elems =  els.elems :+ productEncoder.encode(actual) )
         case _ => throw new Exception
       }
     )
