@@ -10,6 +10,8 @@ case class Elem(xmlValues: Seq[(String, XmlValue)]) extends XmlValue
 
 case class Elems(elems: Seq[XmlValue]) extends XmlValue
 
+case object XNone extends XmlValue
+
 
 object XmlValue {
 
@@ -35,6 +37,7 @@ object XmlValue {
           actual._2 match {
             case Attribute(v) => elem % scala.xml.Attribute(key = actual._1.capitalize, value = Text(v), next = Null)
             case e: Elem => elem.copy(child = elem.child ++ elemValueToElem(actual._1, e))
+            case XNone => elem
             case es: Elems => es.elems.foldLeft(
               scala.xml.Elem(
                 prefix = null,

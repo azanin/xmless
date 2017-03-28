@@ -1,6 +1,6 @@
 package com.yazanin.xmless.encoder
 
-import com.yazanin.xmless.model.{Attribute, Elems, XmlValue}
+import com.yazanin.xmless.model.{Attribute, Elems, XNone, XmlValue}
 import shapeless.{HList, LabelledGeneric, Lazy}
 
 trait XmlEncoder[T] {
@@ -29,6 +29,11 @@ object XmlEncoder {
                                              encoder: Lazy[ElemEncoder[H]]
                                             ): XmlEncoder[A] =
     instance[A] { product => encoder.value.encode(generic.to(product)) }
+
+
+  implicit def optionEncode[A](implicit encoder: XmlEncoder[A]): XmlEncoder[Option[A]] = instance[Option[A]] {
+    opt: Option[A] => opt.fold[XmlValue](XNone)(value => encoder.encode(value))
+  }
 
   implicit def seqEncoder[A](implicit productEncoder: XmlEncoder[A]): XmlEncoder[Seq[A]] = instance[Seq[A]] {
     seq: Seq[A] => seq.foldLeft(Elems(Nil): XmlValue)((acc: XmlValue, actual: A) =>

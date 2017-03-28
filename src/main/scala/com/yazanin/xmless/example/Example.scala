@@ -17,7 +17,12 @@ case class OrderLine(primeLineNo: Int)
 
 case class OrderLines(orderLine: Seq[OrderLine])
 
-case class Order(orderNo: String, orderLines: OrderLines, paymentMethods: PaymentMethods)
+case class Order(
+                  orderNo: String,
+                  orderLines: OrderLines,
+                  paymentMethods: PaymentMethods,
+                  pippo: Option[Room],
+                  levelOfService: Option[String] = Some("1234"))
 
 
 object Example extends App {
@@ -36,12 +41,23 @@ object Example extends App {
     ),
     paymentMethods = PaymentMethods(
       paymentMethod = Seq(PaymentMethod(paymentType = "CREDIT_CARD"))
+    ),
+    pippo = Some(room)
+  )
+
+  val orderLines2 = OrderLines(
+    orderLine = Seq(
+      OrderLine(primeLineNo = 1),
+      OrderLine(primeLineNo = 2)
     )
   )
 
   val orderEncoder = XmlEncoder[Order]
+  val orderLinesEncoder = XmlEncoder[OrderLines]
 
   println(encoder.encode(room).toNodeSeq("Room"))
   println(orderEncoder.encode(order).toNodeSeq("Order"))
+  println(orderLinesEncoder.encode(orderLines2).toNodeSeq("OrderLines"))
+
 
 }
