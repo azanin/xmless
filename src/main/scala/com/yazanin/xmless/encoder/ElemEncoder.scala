@@ -4,7 +4,7 @@ import com.yazanin.xmless.model.Elem
 import shapeless.labelled._
 import shapeless.{::, HList, HNil, Lazy, Witness}
 
-trait ElemEncoder[T] extends XmlEncoder[T] {
+trait ElemEncoder[T] extends XmlValueEncoder[T] {
   def encode(value: T): Elem
 }
 
@@ -21,7 +21,7 @@ object ElemEncoder {
   implicit def hListEncoder[K <: Symbol, H, T <: HList](
                                                          implicit
                                                          witness: Witness.Aux[K],
-                                                         hEncoder: Lazy[XmlEncoder[H]],
+                                                         hEncoder: Lazy[XmlValueEncoder[H]],
                                                          tEncoder: ElemEncoder[T]
                                                        ): ElemEncoder[FieldType[K, H] :: T] = {
     val tagName = witness.value.name
